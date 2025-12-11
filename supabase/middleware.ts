@@ -55,20 +55,19 @@ export const updateSession = async (request: NextRequest) => {
     // https://supabase.com/docs/guides/auth/server-side/nextjs
     const { data: { user }, error } = await supabase.auth.getUser();
 
-    // protected routes
+    // protected routes - redirect to sign-in if accessing dashboard without auth
     if (request.nextUrl.pathname.startsWith("/dashboard") && error) {
       return NextResponse.redirect(new URL("/sign-in", request.url));
-    }
-
-    if (request.nextUrl.pathname === "/" && !error) {
-      return NextResponse.redirect(new URL("/", request.url));
     }
 
     return response;
   } catch (e) {
     // If you are here, a Supabase client could not be created!
     // This is likely because you have not set up environment variables.
-    // Check out http://localhost:3000 for Next Steps.
+    // Log error but don't expose it to client
+    console.error('Middleware error:', e);
+    
+    // Return a valid response to prevent middleware failure
     return NextResponse.next({
       request: {
         headers: request.headers,
