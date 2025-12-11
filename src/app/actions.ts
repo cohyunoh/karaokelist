@@ -38,7 +38,6 @@ export const signUpAction = async (formData: FormData) => {
 
   if (user) {
     try {
-
       const { error: updateError } = await supabase
         .from('users')
         .insert({
@@ -59,6 +58,23 @@ export const signUpAction = async (formData: FormData) => {
         );
         return;
       }
+
+      // Check if user has an active session (email confirmation may or may not be required)
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (session) {
+        // User is logged in, redirect to dashboard
+        redirect("/dashboard");
+        return;
+      } else {
+        // Email confirmation required, show success message
+        encodedRedirect(
+          "success",
+          "/sign-up",
+          "Thanks for signing up! Please check your email for a verification link.",
+        );
+        return;
+      }
     } catch (err: any) {
       // Check if this is a redirect error - if so, re-throw it
       if (err?.digest === 'NEXT_REDIRECT') {
@@ -74,10 +90,11 @@ export const signUpAction = async (formData: FormData) => {
     }
   }
 
+    // No user returned (shouldn't happen, but handle it)
     encodedRedirect(
-      "success",
+      "error",
       "/sign-up",
-      "Thanks for signing up! Please check your email for a verification link.",
+      "Failed to create account. Please try again.",
     );
   } catch (error: any) {
     // Check if this is a redirect error - if so, re-throw it
