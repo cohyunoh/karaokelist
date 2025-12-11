@@ -7,6 +7,8 @@ import { SmtpMessage } from "../smtp-message";
 import { signUpAction } from "@/app/actions";
 import Navbar from "@/components/navbar";
 
+export const dynamic = 'force-dynamic';
+
 export default async function Signup(props: {
   searchParams: Promise<Message>;
 }) {

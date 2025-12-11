@@ -7,6 +7,8 @@ import { SmtpMessage } from "../smtp-message";
 import { forgotPasswordAction } from "@/app/actions";
 import Navbar from "@/components/navbar";
 
+export const dynamic = 'force-dynamic';
+
 export default async function ForgotPassword(props: {
   searchParams: Promise<Message>;
 }) {

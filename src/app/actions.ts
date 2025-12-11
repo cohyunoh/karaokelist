@@ -5,10 +5,11 @@ import { redirect } from "next/navigation";
 import { createClient } from "../../supabase/server";
 
 export const signUpAction = async (formData: FormData) => {
-  const email = formData.get("email")?.toString();
-  const password = formData.get("password")?.toString();
-  const fullName = formData.get("full_name")?.toString() || '';
-  const supabase = await createClient();
+  try {
+    const email = formData.get("email")?.toString();
+    const password = formData.get("password")?.toString();
+    const fullName = formData.get("full_name")?.toString() || '';
+    const supabase = await createClient();
 
   if (!email || !password) {
     return encodedRedirect(
@@ -65,28 +66,43 @@ export const signUpAction = async (formData: FormData) => {
     }
   }
 
-  return encodedRedirect(
-    "success",
-    "/sign-up",
-    "Thanks for signing up! Please check your email for a verification link.",
-  );
+    return encodedRedirect(
+      "success",
+      "/sign-up",
+      "Thanks for signing up! Please check your email for a verification link.",
+    );
+  } catch (error) {
+    return encodedRedirect(
+      "error",
+      "/sign-up",
+      error instanceof Error ? error.message : "An error occurred during sign up"
+    );
+  }
 };
 
 export const signInAction = async (formData: FormData) => {
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
-  const supabase = await createClient();
+  try {
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+    const supabase = await createClient();
 
-  const { error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-  if (error) {
-    return encodedRedirect("error", "/sign-in", error.message);
+    if (error) {
+      return encodedRedirect("error", "/sign-in", error.message);
+    }
+
+    return redirect("/dashboard");
+  } catch (error) {
+    return encodedRedirect(
+      "error",
+      "/sign-in",
+      error instanceof Error ? error.message : "An error occurred during sign in"
+    );
   }
-
-  return redirect("/dashboard");
 };
 
 export const forgotPasswordAction = async (formData: FormData) => {
