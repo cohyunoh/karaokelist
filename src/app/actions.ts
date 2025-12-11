@@ -12,11 +12,12 @@ export const signUpAction = async (formData: FormData) => {
     const supabase = await createClient();
 
   if (!email || !password) {
-    return encodedRedirect(
+    encodedRedirect(
       "error",
       "/sign-up",
       "Email and password are required",
     );
+    return;
   }
 
   const { data: { user }, error } = await supabase.auth.signUp({
@@ -31,7 +32,8 @@ export const signUpAction = async (formData: FormData) => {
   });
 
   if (error) {
-    return encodedRedirect("error", "/sign-up", error.message);
+    encodedRedirect("error", "/sign-up", error.message);
+    return;
   }
 
   if (user) {
@@ -50,29 +52,39 @@ export const signUpAction = async (formData: FormData) => {
 
       if (updateError) {
         // Error handling without console.error
-        return encodedRedirect(
+        encodedRedirect(
           "error",
           "/sign-up",
           "Error updating user. Please try again.",
         );
+        return;
       }
-    } catch (err) {
+    } catch (err: any) {
+      // Check if this is a redirect error - if so, re-throw it
+      if (err?.digest === 'NEXT_REDIRECT') {
+        throw err;
+      }
       // Error handling without console.error
-      return encodedRedirect(
+      encodedRedirect(
         "error",
         "/sign-up",
         "Error updating user. Please try again.",
       );
+      return;
     }
   }
 
-    return encodedRedirect(
+    encodedRedirect(
       "success",
       "/sign-up",
       "Thanks for signing up! Please check your email for a verification link.",
     );
-  } catch (error) {
-    return encodedRedirect(
+  } catch (error: any) {
+    // Check if this is a redirect error - if so, re-throw it
+    if (error?.digest === 'NEXT_REDIRECT') {
+      throw error;
+    }
+    encodedRedirect(
       "error",
       "/sign-up",
       error instanceof Error ? error.message : "An error occurred during sign up"
@@ -92,12 +104,17 @@ export const signInAction = async (formData: FormData) => {
     });
 
     if (error) {
-      return encodedRedirect("error", "/sign-in", error.message);
+      encodedRedirect("error", "/sign-in", error.message);
+      return;
     }
 
-    return redirect("/dashboard");
-  } catch (error) {
-    return encodedRedirect(
+    redirect("/dashboard");
+  } catch (error: any) {
+    // Check if this is a redirect error - if so, re-throw it
+    if (error?.digest === 'NEXT_REDIRECT') {
+      throw error;
+    }
+    encodedRedirect(
       "error",
       "/sign-in",
       error instanceof Error ? error.message : "An error occurred during sign in"

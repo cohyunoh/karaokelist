@@ -4,6 +4,8 @@ import { redirect } from "next/navigation";
 import { SubscriptionCheck } from "@/components/subscription-check";
 import { KaraokeDashboard } from "@/components/spotify/karaoke-dashboard";
 
+export const dynamic = 'force-dynamic';
+
 export default async function Dashboard() {
   const supabase = await createClient();
 

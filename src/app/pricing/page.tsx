@@ -3,6 +3,8 @@ import PricingCard from "@/components/pricing-card";
 import { createClient } from "../../../supabase/server";
 import { Mic2, Music2, Sparkles, Clock } from "lucide-react";
 
+export const dynamic = 'force-dynamic';
+
 export default async function Pricing() {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
