@@ -1,4 +1,6 @@
 {
     "deno.enable": true,
-    "git.enabled": false
+    "git.enabled": true,
+    "git.blame.editorDecoration.enabled": true,
+    "git.diagnosticsCommitHook.Enabled": true
 }
