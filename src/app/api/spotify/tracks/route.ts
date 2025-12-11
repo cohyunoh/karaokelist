@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
       let nextUrl: string | null = `https://api.spotify.com/v1/playlists/${playlistId}/tracks?limit=100`;
       
       while (nextUrl) {
-        const response = await fetch(nextUrl, {
+        const response: Response = await fetch(nextUrl, {
           headers: {
             'Authorization': `Bearer ${accessToken}`,
           },

@@ -147,7 +147,7 @@ export function KaraokeDashboard() {
           </div>
           <PlaylistSelector
             onPlaylistsSelected={handlePlaylistsSelected}
-            isProcessing={viewState === 'processing'}
+            isProcessing={false}
           />
         </Card>
       )}

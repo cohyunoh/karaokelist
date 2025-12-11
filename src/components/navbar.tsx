@@ -5,10 +5,16 @@ import { Mic2 } from 'lucide-react'
 import UserProfile from './user-profile'
 
 export default async function Navbar() {
-  const supabase = createClient()
+  let user = null;
 
-  const { data: { user } } = await (await supabase).auth.getUser()
-
+  try {
+    const supabase = await createClient();
+    const userResult = await supabase.auth.getUser();
+    user = userResult.data.user;
+  } catch (error) {
+    // If Supabase is not configured or fails, continue without user
+    console.error('Error loading user in navbar:', error);
+  }
 
   return (
     <nav className="w-full border-b border-border bg-background py-3">
